@@ -1,0 +1,36 @@
+{
+	"extends": "./.svelte-kit/tsconfig.json",
+	"compilerOptions": {
+		"target": "es2020",
+		"module": "esnext",
+		"strict": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"useDefineForClassFields": true,
+		"isolatedModules": true,
+		"resolveJsonModule": true,
+		"sourceMap": true,
+		"allowJs": true,
+		"checkJs": true,
+		"noImplicitAny": false,
+		"noImplicitThis": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"allowImportingTsExtensions": true
+	},
+	"include": [
+		"src/**/*",
+		"src/node_modules/**/*.js",
+		"src/node_modules/**/*.ts",
+		"src/node_modules/",
+		"tests/calculateLevel.test.ts"
+	],
+	"exclude": ["node_modules/*", "__sapper__/*", "public/*"]
+}

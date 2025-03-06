@@ -1,0 +1,211 @@
+/* Tailwind defaults 'css reset' */
+/* Example: box-sizing: border-box; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* ✅🔳 */
+@layer utilities {
+	.center {
+		@apply flex flex-wrap items-center justify-center text-center;
+	}
+
+	.avatar {
+		@apply min-h-10 min-w-10 rounded-full object-cover;
+	}
+
+	.abs-x {
+		@apply absolute left-[50%] translate-x-[-50%];
+	}
+
+	.abs-y {
+		@apply absolute top-[50%] translate-y-[-50%];
+	}
+	.abs-0 {
+		@apply absolute bottom-0 left-0 right-0 top-0;
+	}
+	.trans {
+		@apply transition-all duration-300 ease-in-out;
+	}
+	/* Fix Later */
+	.brighten {
+		@apply transition-all duration-200 hover:brightness-110;
+	}
+	.glass {
+		@apply border border-bg3/50 bg-bg1/80 backdrop-blur-sm;
+	}
+	.card {
+		@apply trans rounded-lg bg-bg2 p-6 shadow-sm hover:shadow-md;
+	}
+	.input-focus {
+		@apply focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/20;
+	}
+	.hover-accent {
+		@apply transition-colors duration-200 hover:text-accent;
+	}
+
+	.animate-success {
+		animation: success 0.5s ease-in-out;
+	}
+
+	.animate-error {
+		animation: error 0.5s ease-in-out;
+	}
+
+	@keyframes success {
+		0% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.1);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+
+	@keyframes error {
+		0%,
+		100% {
+			transform: translateX(0);
+		}
+		20%,
+		60% {
+			transform: translateX(-5px);
+		}
+		40%,
+		80% {
+			transform: translateX(5px);
+		}
+	}
+}
+/* ✅🔳 */
+@layer base {
+	/* Root Variables */
+	:root {
+		--bg1: 0 0% 100%; /* White */
+		--bg2: 0 0% 97%; /* Light gray */
+		--bg3: 0 0% 94%; /* Lighter gray */
+		--bg4: 0 0% 91%; /* Gray */
+		--bg5: 0 0% 88%; /* Darker gray */
+		--bg6: 0 0% 85%; /* Even darker gray */
+		--bg7: 0 0% 82%; /* Dark gray */
+		--card: 0 0% 100%; /* White */
+		--card-foreground: 0 0% 3.9%; /* Almost Black */
+		--popover: 0 0% 100%; /* White */
+		--popover-foreground: 0 0% 3.9%; /* Almost Black */
+		--primary: 180 72.2% 50.6%; /* Light Teal */
+		--primary-foreground: 180 85.7% 97.3%; /* Very Light Teal */
+		--secondary: 0 0% 96.1%; /* Very Light Gray */
+		--secondary-foreground: 0 0% 9%; /* Dark Gray */
+		--muted: 0 0% 96.1%; /* Very Light Gray */
+		--muted-foreground: 0 0% 45.1%; /* Medium Gray */
+		--accent: 180, 100%, 30%; /* Cyan (Light Mode) */
+		--accent-foreground: 180, 100%, 10%; /* Darker Cyan */
+		--destructive: 0 72.22% 50.59%; /* Vivid Red */
+		--destructive-foreground: 0 0% 98%; /* Almost White */
+		--border: 0 0% 89.8%; /* Light Gray */
+		--input: 0 0% 89.8%; /* Light Gray */
+		--ring: 180 72.2% 50.6%; /* Light Teal */
+		--radius: 1rem; /* Border radius */
+		--text: 0 0% 0%;
+		/*  */
+		--cyan: 180, 100%, 30%;
+	}
+
+	.dark {
+		--bg1: 223, 17%, 11%;
+		--bg2: 222, 16%, 12%;
+		--bg3: 222, 17%, 15%;
+		--bg4: 223, 17%, 13%;
+		--bg5: 222, 16%, 15%;
+		--bg6: 222, 17%, 18%;
+		--bg7: 223, 17%, 17%;
+		--card: 222, 16%, 18%;
+		--card-foreground: 0 0% 98%; /* Very Light Gray */
+		--popover: 0 0% 3.9%; /* Almost Black */
+		--popover-foreground: 0 0% 98%; /* Very Light Gray */
+		--primary: 180 72.2% 50.6%; /* Light Teal */
+		--primary-foreground: 180 85.7% 97.3%; /* Very Light Teal */
+		--secondary: 0 0% 14.9%; /* Dark Gray */
+		--secondary-foreground: 0 0% 98%; /* Very Light Gray */
+		--muted: 0 0% 14.9%; /* Dark Gray */
+		--muted-foreground: 0 0% 63.9%; /* Medium Gray */
+		--accent: 180, 100%, 70%; /* Cyan (Dark Mode) */
+		--accent-foreground: 180, 100%, 90%; /* Lighter Cyan */
+		--destructive: 0 62.8% 30.6%; /* Dark Red */
+		--destructive-foreground: 0 0% 98%; /* Almost White */
+		--border: 0 0% 14.9%; /* Dark Gray */
+		--input: 0 0% 14.9%; /* Dark Gray */
+		--ring: 180 72.2% 50.6%; /* Light Teal */
+		--text: 0 0% 100%;
+		--cyan: 180, 100%, 70%;
+	}
+
+	body {
+		@apply font-roboto text-text;
+		font-feature-settings:
+			'rlig' 1,
+			'calt' 1;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-rendering: optimizeLegibility;
+	}
+
+	/* Get rid of ugly blue focus rings for certain form elements */
+	form input:focus:not(.custom),
+	form label:focus:not(.custom) {
+		@apply focus:border-transparent focus:outline-none focus:ring-0;
+	}
+
+	/* Make small scrollbar for div-scrollbars */
+	div {
+		@apply text-text;
+		scrollbar-width: thin;
+		scrollbar-color: #dbdbdb #141414;
+	}
+
+	input,
+	textarea {
+		/* Bad practice probably but also strict adherance. */
+		@apply bg-bg2 !important;
+	}
+
+	/* ------ Scrollbar Stuff ------*/
+	::-webkit-scrollbar {
+		width: 12px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: #0c0c0c;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: #161616;
+		border-radius: 10px;
+		border: 3px solid #313131;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
+
+	/* Firefox and Chrome (works for mine) */
+	html {
+		scrollbar-width: auto;
+		scrollbar-color: #4d4d4d #141414;
+	}
+}
+/* ✅🔳 */
+@layer components {
+	.world-map-highlight {
+		fill: red;
+	}
+
+	:global(svg) {
+		width: 100%; /* Ensures the SVG scales with the container */
+		height: auto; /* Maintains the aspect ratio */
+		max-width: 100%; /* Prevents overflow */
+	}
+}
+/* 💪🏾🤜🏾 */
+/* 💪🏾🤜🏾 */

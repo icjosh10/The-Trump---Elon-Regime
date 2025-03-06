@@ -1,0 +1,28 @@
+# Too chonky 🎅
+node_modules
+# Too secrete 😏
+.env
+.env.*
+!.env.example
+# Other Stuff ⭕
+.DS_Store
+.vercel
+.output
+/build
+/.svelte-kit
+/package
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vercel
+.env*.local
+
+# My Stuff
+/logs/
+*.log
+/src/lib/data/hidden
+/src/routes/api/seed
+/src/routes/api/test
+
+
+# windsurf rules
+.windsurfrules

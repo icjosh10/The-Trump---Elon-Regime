@@ -1,0 +1,11 @@
+# robots.txt file for https://joshuavanyo.com
+
+# User-agent directives specify which web crawlers the rules apply to.
+# Use "*" as a wildcard to apply rules to all crawlers.
+
+# Allow all web crawlers to access the entire website.
+User-agent: *
+Disallow:
+
+# Reference the sitemap for search engines.
+Sitemap: https://joshuavanyo.com/sitemap.xml
