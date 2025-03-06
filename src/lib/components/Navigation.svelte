@@ -1,5 +1,6 @@
 <script>
   import { page } from '$app/stores';
+  import { fade, fly } from 'svelte/transition';
   
   const links = $state([
     { href: '/', label: 'Home', icon: 'home' },
@@ -16,38 +17,53 @@
   }
   
   // Toggle mobile menu
+  let mobileMenuOpen = $state(false);
   function toggleMobileMenu() {
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (mobileMenu) {
-      mobileMenu.classList.toggle('hidden');
-    }
+    mobileMenuOpen = !mobileMenuOpen;
   }
 </script>
 
-<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-zinc-900/70 border-b border-zinc-800/50">
-  <div class="max-w-6xl mx-auto px-4">
-    <div class="flex items-center justify-between h-16">
+<nav class="fixed left-0 right-0 top-0 z-50 border-b border-zinc-800/50 backdrop-blur-xl">
+  <!-- Glow effect for the active navigation item -->
+  <div class="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-30"></div>
+  
+  <div class="mx-auto max-w-7xl px-4">
+    <div class="flex h-16 items-center justify-between">
       <!-- Logo -->
       <div class="flex-shrink-0">
-        <a href="/" class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-red-500">
-          Threat Monitor
+        <a href="/" class="group flex items-center gap-2">
+          <div class="relative flex h-8 w-8 items-center justify-center">
+            <div class="absolute inset-0 rotate-45 rounded bg-gradient-to-br from-red-500 to-blue-500 opacity-80 blur-[1px] transition-all duration-300 group-hover:rotate-90 group-hover:opacity-100"></div>
+            <div class="absolute inset-0 rotate-45 rounded bg-gradient-to-br from-red-500 to-blue-500"></div>
+            <iconify-icon icon="lucide:shield-alert" width="16" height="16" class="relative z-10 text-white"></iconify-icon>
+          </div>
+          <span class="bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-xl font-bold text-transparent">
+            Threat Monitor
+          </span>
         </a>
       </div>
       
-      <!-- Navigation Links -->
+      <!-- Navigation Links - Desktop -->
       <div class="hidden md:block">
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-1">
           {#each links as link}
             <a
               href={link.href}
-              class={`px-4 py-2 rounded-lg transition-colors ${
+              class={`group relative px-4 py-2 transition-all duration-300 ${
                 isActive(link.href)
-                  ? 'bg-zinc-800 text-white'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                  ? 'text-white'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
+              <!-- Background and effects for active/hover states -->
+              {#if isActive(link.href)}
+                <div class="absolute inset-0 -z-10 rounded-lg bg-zinc-800/80"></div>
+                <div class="absolute inset-0 -z-10 rounded-lg bg-gradient-to-r from-red-600/20 to-blue-600/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"></div>
+                <div class="absolute bottom-0 left-1/2 h-0.5 w-1/2 -translate-x-1/2 bg-gradient-to-r from-red-500 to-blue-500 opacity-70"></div>
+              {/if}
+              
               <div class="flex items-center space-x-2">
-                <iconify-icon icon={`lucide:${link.icon}`}></iconify-icon>
+                <iconify-icon icon={`lucide:${link.icon}`} width="16" height="16" class={isActive(link.href) ? 'text-red-400' : ''}></iconify-icon>
                 <span>{link.label}</span>
               </div>
             </a>
@@ -60,37 +76,58 @@
         <button
           type="button"
           onclick={toggleMobileMenu}
-          class="inline-flex items-center justify-center p-2 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 focus:outline-none"
+          class="flex items-center justify-center rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-800/50 hover:text-white focus:outline-none"
           aria-controls="mobile-menu"
-          aria-expanded="false"
+          aria-expanded={mobileMenuOpen}
         >
-          <span class="sr-only">Open main menu</span>
-          <iconify-icon icon="lucide:menu" width="24" height="24"></iconify-icon>
+          <span class="sr-only">Toggle menu</span>
+          {#if !mobileMenuOpen}
+            <iconify-icon icon="lucide:menu" width="24" height="24"></iconify-icon>
+          {:else}
+            <iconify-icon icon="lucide:x" width="24" height="24"></iconify-icon>
+          {/if}
         </button>
       </div>
     </div>
   </div>
   
-  <!-- Mobile menu, toggle classes based on menu state -->
-  <div class="hidden md:hidden" id="mobile-menu">
-    <div class="px-2 pt-2 pb-3 space-y-1 border-t border-zinc-800/50">
-      {#each links as link}
-        <a
-          href={link.href}
-          class={`block px-3 py-2 rounded-md ${
-            isActive(link.href)
-              ? 'bg-zinc-800 text-white'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-          }`}
-        >
-          <div class="flex items-center space-x-2">
-            <iconify-icon icon={`lucide:${link.icon}`}></iconify-icon>
+  <!-- Mobile menu -->
+  {#if mobileMenuOpen}
+    <div 
+      class="md:hidden"
+      id="mobile-menu"
+      in:fly={{ y: -20, duration: 200 }}
+      out:fade={{ duration: 150 }}
+    >
+      <div class="border-t border-zinc-800/50 px-2 pb-3 pt-2">
+        {#each links as link}
+          <a
+            href={link.href}
+            class={`my-1 flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+              isActive(link.href)
+                ? 'bg-gradient-to-r from-zinc-800 to-zinc-800/80 text-white'
+                : 'text-zinc-400 hover:bg-zinc-800/40 hover:text-white'
+            }`}
+            onclick={toggleMobileMenu}
+          >
+            <iconify-icon 
+              icon={`lucide:${link.icon}`} 
+              width="18" 
+              height="18" 
+              class={isActive(link.href) ? 'text-red-400' : ''}
+            ></iconify-icon>
             <span>{link.label}</span>
-          </div>
-        </a>
-      {/each}
+            
+            {#if isActive(link.href)}
+              <div class="ml-auto">
+                <iconify-icon icon="lucide:chevron-right" width="16" height="16" class="text-zinc-500"></iconify-icon>
+              </div>
+            {/if}
+          </a>
+        {/each}
+      </div>
     </div>
-  </div>
+  {/if}
 </nav>
 
 <!-- Spacer to prevent content from being hidden behind the fixed navbar -->

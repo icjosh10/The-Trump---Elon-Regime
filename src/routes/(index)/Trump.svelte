@@ -1,123 +1,277 @@
 <script>
-  import { fade, fly } from 'svelte/transition';
-  
-  // Risk levels with numerical scores (0-10)
-  const trumpFacts = [
-    { text: "Attempted to overturn legitimate 2020 election results, undermining democracy itself", risk: "Extreme Risk", riskScore: 9.8 },
-    { text: "Incited the January 6th Capitol insurrection, leading to deaths and threatening peaceful transfer of power", risk: "Extreme Risk", riskScore: 9.7 },
-    { text: "Spread dangerous election lies that continue to erode public trust in democratic institutions", risk: "Extreme Risk", riskScore: 9.5 },
-    { text: "Appointed Supreme Court justices who overturned Roe v. Wade, removing reproductive rights", risk: "Critical Risk", riskScore: 8.9 },
-    { text: "Implemented family separation policy at the border, causing irreparable psychological harm to children", risk: "Critical Risk", riskScore: 8.7 },
-    { text: "Emboldened white nationalist groups through rhetoric and policies", risk: "Critical Risk", riskScore: 8.5 },
-    { text: "Repeatedly attacked the free press, calling journalists 'enemies of the people'", risk: "Severe Risk", riskScore: 7.8 },
-    { text: "Dismantled critical environmental protections, accelerating climate change", risk: "Severe Risk", riskScore: 7.6 },
-    { text: "Mishandled the COVID-19 pandemic, contributing to preventable deaths", risk: "Severe Risk", riskScore: 7.4 },
-    { text: "Proposed injecting disinfectant during COVID pandemic, spreading dangerous medical misinformation", risk: "Severe Risk", riskScore: 7.2 },
-    { text: "Faced multiple impeachments during presidency for abuse of power", risk: "High Risk", riskScore: 6.8 },
-    { text: "Maintained close associations with convicted sex traffickers including Jeffrey Epstein and Ghislaine Maxwell", risk: "High Risk", riskScore: 6.6 },
-    { text: "Used presidency to enrich personal businesses, violating emoluments clause", risk: "High Risk", riskScore: 6.4 },
-    { text: "Implemented tax cuts primarily benefiting the wealthy while expanding inequality", risk: "High Risk", riskScore: 6.2 }
-  ];
-  
-  // Sort facts by risk score (highest to lowest)
-  $: sortedTrumpFacts = [...trumpFacts].sort((a, b) => b.riskScore - a.riskScore);
-  
-  // Function to get color based on risk level
-  const getRiskColor = (risk) => {
-    switch(risk) {
-      case 'Extreme Risk': return 'bg-red-600';
-      case 'Critical Risk': return 'bg-red-500';
-      case 'Severe Risk': return 'bg-orange-500';
-      case 'High Risk': return 'bg-yellow-500';
-      default: return 'bg-yellow-500';
-    }
-  };
-  
-  // Function to get glow color based on risk level (for hover effects)
-  const getRiskGlowColor = (risk) => {
-    switch(risk) {
-      case 'Extreme Risk': return 'group-hover:shadow-red-600/40';
-      case 'Critical Risk': return 'group-hover:shadow-red-500/40';
-      case 'Severe Risk': return 'group-hover:shadow-orange-500/40';
-      case 'High Risk': return 'group-hover:shadow-yellow-500/40';
-      default: return 'group-hover:shadow-yellow-500/40';
-    }
-  };
+	import { fade, fly } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
+
+	// Data
+	let showMore = $state(false);
+	let selectedRisk = $state(null);
+
+	const threats = $state([
+		{
+			id: 1,
+			title: 'Election Lies',
+			description:
+				'Trump spread false claims that the 2020 election was stolen, directly leading to the January 6th Capitol attack and undermining faith in our democratic process.',
+			riskScore: 95,
+			citations: ['Congressional Records (2022)', 'Court Filings (2021)', 'DOJ Reports (2022)']
+		},
+		{
+			id: 2,
+			title: 'Violence Incitement',
+			description:
+				'Repeatedly encouraged supporters to use violence against political opponents, journalists, and protesters at his rallies with phrases like "knock the crap out of them" and "I\'ll pay your legal fees."',
+			riskScore: 91,
+			citations: ['Rally Transcripts (2016-2021)', 'Criminal Charges (2023)', 'Media Documentation']
+		},
+		{
+			id: 3,
+			title: 'Judicial Interference',
+			description:
+				'Attacked judges who ruled against him, pressured DOJ officials to interfere in investigations, and pardoned allies who committed crimes to protect him.',
+			riskScore: 88,
+			citations: ['DOJ Inspector General Report', 'Witness Testimony', 'Court Records']
+		},
+		{
+			id: 4,
+			title: 'Free Press Attacks',
+			description:
+				'Labeled journalists as "enemies of the people," attempted to revoke press credentials of critical reporters, and threatened media companies with legal action.',
+			riskScore: 82,
+			citations: ['Press Freedom Index', 'White House Briefing Records', 'Lawsuit Documents']
+		},
+		{
+			id: 5,
+			title: 'Constitutional Violations',
+			description:
+				'Ignored separation of powers, claimed "absolute immunity" from prosecution, and openly stated he would use military against domestic opponents.',
+			riskScore: 87,
+			citations: ['Supreme Court Rulings', 'Legal Scholars Analysis', 'Public Statements']
+		}
+	]);
+
+	// Determine risk label and color based on risk score
+	function getRiskLabel(score) {
+		if (score >= 90) return 'Extreme';
+		if (score >= 80) return 'Severe';
+		if (score >= 70) return 'High';
+		if (score >= 50) return 'Moderate';
+		return 'Low';
+	}
+
+	function getRiskColor(score) {
+		if (score >= 90) return 'bg-red-500 text-white border-red-400';
+		if (score >= 80) return 'bg-orange-500 text-white border-orange-400';
+		if (score >= 70) return 'bg-amber-500 text-white border-amber-400';
+		if (score >= 50) return 'bg-yellow-500 text-white border-yellow-400';
+		return 'bg-green-500 text-white border-green-400';
+	}
+
+	function getRiskBgColor(score) {
+		if (score >= 90) return 'bg-red-950/40 border-red-900/50';
+		if (score >= 80) return 'bg-orange-950/40 border-orange-900/50';
+		if (score >= 70) return 'bg-amber-950/40 border-amber-900/50';
+		if (score >= 50) return 'bg-yellow-950/40 border-yellow-900/50';
+		return 'bg-green-950/40 border-green-900/50';
+	}
+
+	function getGradientColor(score) {
+		if (score >= 90) return 'from-red-900/20 to-red-800/5';
+		if (score >= 80) return 'from-orange-900/20 to-orange-800/5';
+		if (score >= 70) return 'from-amber-900/20 to-amber-800/5';
+		if (score >= 50) return 'from-yellow-900/20 to-yellow-800/5';
+		return 'from-green-900/20 to-green-800/5';
+	}
+
+	function getIconColor(score) {
+		if (score >= 90) return 'text-red-400';
+		if (score >= 80) return 'text-orange-400';
+		if (score >= 70) return 'text-amber-400';
+		if (score >= 50) return 'text-yellow-400';
+		return 'text-green-400';
+	}
+
+	// Toggle selected risk
+	function toggleRisk(risk) {
+		if (selectedRisk && selectedRisk.id === risk.id) {
+			selectedRisk = null;
+		} else {
+			selectedRisk = risk;
+		}
+	}
 </script>
 
-<div in:fade={{ duration: 300 }}>
-  <div class="flex flex-col md:flex-row gap-10 items-center mb-12">
-    <div class="md:w-1/2 relative">
-      <div class="aspect-video rounded-xl overflow-hidden relative group">
-        <img 
-          src="/images/trump_epstein_1.webp" 
-          alt="Donald Trump with Jeffrey Epstein" 
-          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-transparent"></div>
-        <div class="absolute bottom-0 right-0 w-full h-1 bg-gradient-to-l from-red-600 to-transparent"></div>
-        <div class="absolute inset-0 flex items-end">
-          <div class="p-6">
-            <span class="text-sm text-zinc-400 font-medium">Trump with convicted sex trafficker Jeffrey Epstein</span>
-          </div>
-        </div>
-        
-        <!-- Glowing effect on hover -->
-        <div class="absolute -inset-0.5 bg-red-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-      </div>
-    </div>
-    
-    <div class="md:w-1/2">
-      <div class="relative">
-        <h3 class="text-3xl font-bold mb-6 inline-block relative">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">The Trump Regime</span>
-          <div class="absolute -bottom-2 left-0 w-1/3 h-0.5 bg-gradient-to-r from-red-600 to-transparent"></div>
-        </h3>
-        <p class="text-zinc-300 mb-4 leading-relaxed">
-          Donald Trump's sustained assault on democratic institutions, civil rights, and factual information 
-          represents an existential threat to American democracy and global stability.
-        </p>
-        <div class="flex gap-2 mb-6">
-          <div class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm flex items-center gap-1">
-            <iconify-icon icon="lucide:alert-triangle" width="14" height="14"></iconify-icon>
-            <span>Extreme Threat Level</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="relative overflow-hidden">
+	<div class="mb-8 text-center">
+		<h1 class="mb-3 text-4xl font-bold leading-tight sm:text-5xl">
+			<span class="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
+				Donald Trump
+			</span>
+		</h1>
+		<p class="mx-auto max-w-3xl text-lg text-zinc-300/90">
+			Trump wants to destroy democracy and become America's dictator. He has already tried to
+			overturn an election and incited violence against the government.
+		</p>
+	</div>
 
-  <div class="mb-10">
-    <h4 class="text-2xl font-bold mb-4 inline-block relative">
-      Documented Threats
-      <div class="absolute -bottom-1 left-0 w-1/6 h-0.5 bg-red-600"></div>
-    </h4>
-    <p class="text-zinc-300 mb-6">
-      These documented actions demonstrate a clear pattern of authoritarian behavior
-      and disregard for democratic norms and institutions.
-    </p>
-  </div>
+	<div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+		{#each threats.slice(0, showMore ? threats.length : 3) as risk, i (risk.id)}
+			<div
+				class={`group relative overflow-hidden rounded-xl border backdrop-blur-sm transition-all duration-300 ${getRiskBgColor(risk.riskScore)} ${selectedRisk && selectedRisk.id === risk.id ? 'ring-2 ring-red-500/50 ring-offset-4 ring-offset-zinc-950' : 'hover:border-red-500/30'}`}
+				in:fly={{
+					y: 20,
+					duration: 400,
+					delay: i * 100,
+					easing: quintOut
+				}}>
+				<div class="relative z-10 p-5">
+					<div class="mb-4 flex items-center justify-between">
+						<div class="flex items-center gap-2">
+							<iconify-icon
+								icon="lucide:alert-triangle"
+								class={getIconColor(risk.riskScore)}
+								width="20"
+								height="20">
+							</iconify-icon>
+							<span
+								class={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${getRiskColor(risk.riskScore)}`}>
+								{getRiskLabel(risk.riskScore)} Risk
+							</span>
+						</div>
+						<span class="text-3xl font-bold tabular-nums text-red-500/80">{risk.riskScore}</span>
+					</div>
 
-  <div class="grid md:grid-cols-2 gap-5">
-    {#each sortedTrumpFacts as fact, i}
-      <div 
-        class="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800/50 rounded-xl overflow-hidden relative group transition-all duration-300 hover:border-red-500/30 hover:shadow-lg hover:shadow-red-500/5"
-        in:fly={{ y: 20, delay: i * 50, duration: 400 }}
-      >
-        <!-- Risk indicator dot - more subtle and integrated -->
-        <div class="h-1 w-full absolute top-0 left-0 flex">
-          <div class={`h-full ${getRiskColor(fact.risk)}`} style="width: {fact.riskScore * 10}%" aria-label={fact.risk}></div>
-        </div>
-        
-        <div class="p-5">
-          <p class="text-zinc-200">{fact.text}</p>
-        </div>
-      </div>
-    {/each}
-  </div>
+					<h3 class="mb-2 text-xl font-bold text-white group-hover:text-red-100">{risk.title}</h3>
+					<p class="mb-4 text-sm text-zinc-300/90">
+						{risk.description.length > 120 && !selectedRisk
+							? risk.description.substring(0, 120) + '...'
+							: risk.description}
+					</p>
+
+					{#if selectedRisk && selectedRisk.id === risk.id}
+						<div class="animate-fadeIn mt-4">
+							<div class="mb-2 text-sm font-medium text-zinc-400">Sources:</div>
+							<ul class="space-y-1 text-sm text-zinc-400">
+								{#each risk.citations as citation}
+									<li class="flex items-start gap-2">
+										<iconify-icon
+											icon="lucide:link"
+											class="mt-0.5 text-red-400"
+											width="14"
+											height="14">
+										</iconify-icon>
+										<span>{citation}</span>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+
+					<button
+						class="mt-3 flex items-center gap-1.5 text-sm font-medium text-red-400 transition-colors hover:text-red-300"
+						onclick={() => toggleRisk(risk)}
+						aria-expanded={selectedRisk && selectedRisk.id === risk.id}>
+						<iconify-icon
+							icon={selectedRisk && selectedRisk.id === risk.id
+								? 'lucide:minus-circle'
+								: 'lucide:plus-circle'}
+							width="16"
+							height="16">
+						</iconify-icon>
+						<span>{selectedRisk && selectedRisk.id === risk.id ? 'Show Less' : 'See More'}</span>
+					</button>
+				</div>
+			</div>
+		{/each}
+	</div>
+
+	{#if threats.length > 3}
+		<div class="mb-8 flex justify-center">
+			<button
+				class="group flex items-center gap-2 rounded-xl border border-zinc-700/50 bg-zinc-800/50 px-6 py-3 text-lg font-medium text-white shadow-sm transition-all hover:border-red-500/30 hover:bg-red-900/20 hover:shadow-md hover:shadow-red-900/10"
+				onclick={() => (showMore = !showMore)}
+				aria-expanded={showMore}>
+				<iconify-icon
+					icon={showMore ? 'lucide:chevron-up' : 'lucide:chevron-down'}
+					width="20"
+					height="20"
+					class="text-red-400">
+				</iconify-icon>
+				<span>{showMore ? 'Show Less' : 'Show More Threats'}</span>
+			</button>
+		</div>
+	{/if}
+
+	<div class="rounded-xl border border-zinc-700/50 bg-zinc-900/30 p-6 backdrop-blur-sm">
+		<h2 class="mb-4 text-2xl font-bold text-white">
+			<span class="bg-gradient-to-r from-red-500 to-red-300 bg-clip-text text-transparent">
+				Trump's Plan for America
+			</span>
+		</h2>
+
+		<p class="mb-4 text-lg text-zinc-300">
+			If re-elected, Trump has promised to be a dictator "on day one" and use the Justice Department
+			to punish his enemies. He plans to fire career officials and replace them with loyalists.
+		</p>
+		<p class="mb-4 text-lg text-zinc-300">
+			He has already tried to overturn one election. If he loses in 2024, he will likely refuse to
+			accept the results again and encourage his supporters to use violence.
+		</p>
+
+		<div class="mt-8 flex flex-wrap gap-4">
+			<div class="flex items-center gap-2">
+				<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-900/30">
+					<iconify-icon icon="lucide:trending-up" class="text-red-400" width="24" height="24">
+					</iconify-icon>
+				</div>
+				<div>
+					<div class="text-sm text-zinc-400">Overall Risk Score</div>
+					<div class="text-xl font-bold text-white">
+						<span class="text-red-400">92</span>
+						/100
+					</div>
+				</div>
+			</div>
+
+			<div class="flex items-center gap-2">
+				<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-900/30">
+					<iconify-icon icon="lucide:alert-octagon" class="text-red-400" width="24" height="24">
+					</iconify-icon>
+				</div>
+				<div>
+					<div class="text-sm text-zinc-400">Threat Level</div>
+					<div class="text-xl font-bold text-white">
+						<span class="text-red-400">Extreme</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="flex items-center gap-2">
+				<div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-900/30">
+					<iconify-icon icon="lucide:clock" class="text-red-400" width="24" height="24">
+					</iconify-icon>
+				</div>
+				<div>
+					<div class="text-sm text-zinc-400">Timeline</div>
+					<div class="text-xl font-bold text-white">
+						<span class="text-red-400">Immediate</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <style>
-/* Empty style block to prevent CSS processing error */
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	.animate-fadeIn {
+		animation: fadeIn 0.5s ease-out forwards;
+	}
 </style>

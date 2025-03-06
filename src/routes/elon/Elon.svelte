@@ -1,54 +1,12 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import { elonThreats } from './data';
 
 	// Data
 	let showMore = $state(false);
 	let selectedRisk = $state(null);
 	
-	const threats = $state([
-		{
-			id: 1,
-			title: 'Misinformation Amplification',
-			description:
-				'Musk has removed content moderation on Twitter/X, allowing conspiracy theories and hate speech to spread unchecked across his platform of 250+ million users.',
-			riskScore: 88,
-			citations: ['Media Matters Report (2023)', 'EU Digital Services Act Violation (2023)', 'ADL Report (2023)']
-		},
-		{
-			id: 2,
-			title: 'Election Interference',
-			description:
-				'Using his platform and wealth to promote extremist candidates and spread election misinformation, while allowing his algorithms to amplify divisive content.',
-			riskScore: 85,
-			citations: ['FEC Filings (2022-2023)', 'Platform Algorithm Analysis', 'Media Reports']
-		},
-		{
-			id: 3,
-			title: 'Worker Exploitation',
-			description:
-				'History of union-busting, unsafe working conditions at Tesla factories, and mass layoffs that overburden remaining employees while destroying their work-life balance.',
-			riskScore: 82,
-			citations: ['NLRB Complaints', 'Worker Testimonies', 'OSHA Reports']
-		},
-		{
-			id: 4,
-			title: 'Market Manipulation',
-			description:
-				'Repeatedly used social media to manipulate stock and cryptocurrency prices for personal gain, harming ordinary investors while enriching himself.',
-			riskScore: 80,
-			citations: ['SEC Filings', 'Market Analysis Reports', 'Crypto Market Data']
-		},
-		{
-			id: 5,
-			title: 'Economic Power Abuse',
-			description:
-				'Using his $200+ billion fortune to acquire critical communication infrastructure and influence politics while paying minimal taxes relative to his wealth.',
-			riskScore: 84,
-			citations: ['Forbes Wealth Tracking', 'Tax Records Analysis', 'Acquisition History']
-		}
-	]);
-
 	// Determine risk label and color based on risk score
 	function getRiskLabel(score) {
 		if (score >= 90) return 'Extreme';
@@ -112,7 +70,7 @@
 	</div>
 
 	<div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-		{#each threats.slice(0, showMore ? threats.length : 3) as risk, i (risk.id)}
+		{#each elonThreats.slice(0, showMore ? elonThreats.length : 3) as risk, i (risk.id)}
 			<div 
 				class={`group relative overflow-hidden rounded-xl border backdrop-blur-sm transition-all duration-300 ${getRiskBgColor(risk.riskScore)} ${selectedRisk && selectedRisk.id === risk.id ? 'ring-2 ring-offset-4 ring-offset-zinc-950 ring-orange-500/50' : 'hover:border-orange-500/30'}`}
 				in:fly={{ 
@@ -170,7 +128,7 @@
 		{/each}
 	</div>
 
-	{#if threats.length > 3}
+	{#if elonThreats.length > 3}
 		<div class="mb-8 flex justify-center">
 			<button
 				class="group flex items-center gap-2 rounded-xl border border-zinc-700/50 bg-zinc-800/50 px-6 py-3 text-lg font-medium text-white shadow-sm transition-all hover:border-orange-500/30 hover:bg-orange-900/20 hover:shadow-md hover:shadow-orange-900/10"
